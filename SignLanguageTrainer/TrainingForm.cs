@@ -16,5 +16,10 @@ namespace SignLanguageTrainer
         {
             InitializeComponent();
         }
+
+        private void TrainingForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

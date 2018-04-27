@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignLanguageTranslater", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignLanguageTrainer", "SignLanguageTrainer\SignLanguageTrainer.csproj", "{05F7649F-ADBB-474F-8DAA-7C2476F84A54}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{7E325C0A-06F5-40F8-8587-5472147E2E24}"
+	ProjectSection(SolutionItems) = preProject
+		settings.lua = settings.lua
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

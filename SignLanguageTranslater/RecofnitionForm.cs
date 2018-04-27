@@ -15,6 +15,13 @@ namespace SignLanguageTranslater
         public RecofnitionForm()
         {
             InitializeComponent();
+
+
+
         }
+
+        
+
+
     }
 }
