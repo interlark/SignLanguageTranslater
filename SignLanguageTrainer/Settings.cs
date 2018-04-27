@@ -66,7 +66,7 @@ namespace SignLanguageTrainer
         /// <summary>
         /// Получение символов графа для скрипта тренировки tensorflow
         /// </summary>
-        public static string GetOutputlabelsName()
+        public static string GetOutputLabelsName()
         {
             var func = GetScript().Globals.Get("getOutputGraph");
             var name = func.Function.Call().CastToString();
