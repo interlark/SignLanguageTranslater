@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.listBoxDactil = new System.Windows.Forms.ListBox();
+            this.listBoxDactile = new System.Windows.Forms.ListBox();
             this.groupBoxConsole = new System.Windows.Forms.GroupBox();
             this.groupBoxDactil = new System.Windows.Forms.GroupBox();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listViewGestures = new System.Windows.Forms.ListView();
             this.groupBoxGestures = new System.Windows.Forms.GroupBox();
             this.btnTrain = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxGesture = new System.Windows.Forms.PictureBox();
             this.btnDelete = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.groupBoxConsole.SuspendLayout();
             this.groupBoxDactil.SuspendLayout();
             this.groupBoxGestures.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGesture)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox1
@@ -58,14 +58,15 @@
             this.textBox1.Size = new System.Drawing.Size(1406, 160);
             this.textBox1.TabIndex = 0;
             // 
-            // listBoxDactil
+            // listBoxDactile
             // 
-            this.listBoxDactil.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBoxDactil.FormattingEnabled = true;
-            this.listBoxDactil.Location = new System.Drawing.Point(3, 16);
-            this.listBoxDactil.Name = "listBoxDactil";
-            this.listBoxDactil.Size = new System.Drawing.Size(272, 403);
-            this.listBoxDactil.TabIndex = 1;
+            this.listBoxDactile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listBoxDactile.FormattingEnabled = true;
+            this.listBoxDactile.Location = new System.Drawing.Point(3, 16);
+            this.listBoxDactile.Name = "listBoxDactile";
+            this.listBoxDactile.Size = new System.Drawing.Size(272, 403);
+            this.listBoxDactile.TabIndex = 1;
+            this.listBoxDactile.SelectedValueChanged += new System.EventHandler(this.listBoxDactile_SelectedValueChanged);
             // 
             // groupBoxConsole
             // 
@@ -79,7 +80,7 @@
             // 
             // groupBoxDactil
             // 
-            this.groupBoxDactil.Controls.Add(this.listBoxDactil);
+            this.groupBoxDactil.Controls.Add(this.listBoxDactile);
             this.groupBoxDactil.Location = new System.Drawing.Point(15, 12);
             this.groupBoxDactil.Name = "groupBoxDactil";
             this.groupBoxDactil.Size = new System.Drawing.Size(278, 422);
@@ -87,19 +88,21 @@
             this.groupBoxDactil.TabStop = false;
             this.groupBoxDactil.Text = "Дактиль";
             // 
-            // listView1
+            // listViewGestures
             // 
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Location = new System.Drawing.Point(3, 16);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(760, 403);
-            this.listView1.TabIndex = 4;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.List;
+            this.listViewGestures.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewGestures.Location = new System.Drawing.Point(3, 16);
+            this.listViewGestures.MultiSelect = false;
+            this.listViewGestures.Name = "listViewGestures";
+            this.listViewGestures.Size = new System.Drawing.Size(760, 403);
+            this.listViewGestures.TabIndex = 4;
+            this.listViewGestures.UseCompatibleStateImageBehavior = false;
+            this.listViewGestures.View = System.Windows.Forms.View.List;
+            this.listViewGestures.SelectedIndexChanged += new System.EventHandler(this.listViewGestures_SelectedIndexChanged);
             // 
             // groupBoxGestures
             // 
-            this.groupBoxGestures.Controls.Add(this.listView1);
+            this.groupBoxGestures.Controls.Add(this.listViewGestures);
             this.groupBoxGestures.Location = new System.Drawing.Point(312, 12);
             this.groupBoxGestures.Name = "groupBoxGestures";
             this.groupBoxGestures.Size = new System.Drawing.Size(766, 422);
@@ -118,7 +121,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.pictureBox2);
+            this.groupBox1.Controls.Add(this.pictureBoxGesture);
             this.groupBox1.Location = new System.Drawing.Point(1101, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(413, 358);
@@ -126,15 +129,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Предпросмотр";
             // 
-            // pictureBox2
+            // pictureBoxGesture
             // 
-            this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox2.Location = new System.Drawing.Point(3, 16);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(407, 339);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox2.TabIndex = 0;
-            this.pictureBox2.TabStop = false;
+            this.pictureBoxGesture.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxGesture.Location = new System.Drawing.Point(3, 16);
+            this.pictureBoxGesture.Name = "pictureBoxGesture";
+            this.pictureBoxGesture.Size = new System.Drawing.Size(407, 339);
+            this.pictureBoxGesture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxGesture.TabIndex = 0;
+            this.pictureBoxGesture.TabStop = false;
             // 
             // btnDelete
             // 
@@ -144,6 +147,7 @@
             this.btnDelete.TabIndex = 8;
             this.btnDelete.Text = "Удалить";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // buttonAdd
             // 
@@ -177,8 +181,7 @@
             this.groupBoxDactil.ResumeLayout(false);
             this.groupBoxGestures.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGesture)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -186,14 +189,14 @@
         #endregion
 
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.ListBox listBoxDactil;
+        private System.Windows.Forms.ListBox listBoxDactile;
         private System.Windows.Forms.GroupBox groupBoxConsole;
         private System.Windows.Forms.GroupBox groupBoxDactil;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView listViewGestures;
         private System.Windows.Forms.GroupBox groupBoxGestures;
         private System.Windows.Forms.Button btnTrain;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox pictureBoxGesture;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button buttonAdd;
     }
