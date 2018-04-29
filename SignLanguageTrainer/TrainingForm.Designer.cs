@@ -157,6 +157,7 @@
             this.buttonAdd.TabIndex = 9;
             this.buttonAdd.Text = "Добавить снимков";
             this.buttonAdd.UseVisualStyleBackColor = true;
+            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
             // 
             // TrainingForm
             // 

@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SignLanguageTrainer
@@ -105,6 +99,18 @@ namespace SignLanguageTrainer
                 GC.WaitForPendingFinalizers();
                 File.Delete((string)gestureItem.Tag);
                 gestureItem.Remove();
+            }
+        }
+
+        private void buttonAdd_Click(object sender, EventArgs e)
+        {
+            if (listBoxDactile != null && listBoxDactile.SelectedValue is string)
+            {
+                var gestureFolder = (string)listBoxDactile.SelectedValue;
+                var path = Path.Combine(Settings.GetTrainFolderName(), gestureFolder);
+                var form = new CaptureGesturesForm();
+                form.Path = path;
+                form.ShowDialog();
             }
         }
     }

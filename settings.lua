@@ -56,3 +56,8 @@ end
 function getOutputLabels ()
 	return "RusDactile_Lables.txt"
 end
+
+--Укказываем порог для выделения жеста в метрах.
+function getGestureDepthThresold ()
+    return 0.04;
+end

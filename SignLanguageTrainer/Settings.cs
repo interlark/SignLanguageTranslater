@@ -1,10 +1,6 @@
 ﻿using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Loaders;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SignLanguageTrainer
 {
@@ -72,6 +68,14 @@ namespace SignLanguageTrainer
             var name = func.Function.Call().CastToString();
 
             return name;
+        }
+
+        public static float GetGestureDepthThresold()
+        {
+            var func = GetScript().Globals.Get("getGestureDepthThresold");
+            var threshold = func.Function.Call().CastToNumber();
+
+            return (float)threshold;
         }
     }
 }
