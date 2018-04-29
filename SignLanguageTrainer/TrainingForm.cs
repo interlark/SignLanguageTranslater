@@ -60,9 +60,18 @@ namespace SignLanguageTrainer
                     item.Tag = file;
                     listViewGestures.Items.Add(item);
                 }
-            }
 
-            btnDelete.Enabled = false;
+                if (listViewGestures.Items.Count > 0)
+                {
+                    listViewGestures.Items[0].Selected = true;
+                    listViewGestures.Select();
+                    btnDelete.Enabled = true;
+                }
+            }
+            else
+            {
+                btnDelete.Enabled = false;
+            }
         }
 
         private void listViewGestures_SelectedIndexChanged(object sender, EventArgs e)
@@ -98,7 +107,15 @@ namespace SignLanguageTrainer
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
                 File.Delete((string)gestureItem.Tag);
+                var selIdx = gestureItem.Index;
                 gestureItem.Remove();
+                if (listViewGestures.Items.Count > 0 )
+                {
+                    if (selIdx <= 0) { selIdx = 1; }
+                    listViewGestures.Items[selIdx - 1].Selected = true;
+                    listViewGestures.Select();
+                }
+                
             }
         }
 
@@ -111,6 +128,7 @@ namespace SignLanguageTrainer
                 var form = new CaptureGesturesForm();
                 form.Path = path;
                 form.ShowDialog();
+                listBoxDactile_SelectedValueChanged(listBoxDactile, e);
             }
         }
     }
