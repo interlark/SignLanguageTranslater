@@ -67,6 +67,10 @@ namespace SignLanguageTrainer
                     listViewGestures.Items[0].Selected = true;
                     listViewGestures.Select();
                     btnDelete.Enabled = true;
+                } else
+                {
+                    pictureBoxGesture.Image = null;
+                    btnDelete.Enabled = false;
                 }
             }
             else
