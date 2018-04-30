@@ -106,7 +106,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <Copy SourceFiles="$(SolutionDir)settings.lua" DestinationFolder="$(ProjectDir)$(OutDir)" ContinueOnError="false" />
-	<Copy SourceFiles="$(SolutionDir)retrain.py" DestinationFolder="$(ProjectDir)$(OutDir)" ContinueOnError="false" />
+    <Copy SourceFiles="$(SolutionDir)retrain.py" DestinationFolder="$(ProjectDir)$(OutDir)" ContinueOnError="false" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

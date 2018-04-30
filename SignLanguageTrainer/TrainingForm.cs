@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -130,6 +131,21 @@ namespace SignLanguageTrainer
                 form.ShowDialog();
                 listBoxDactile_SelectedValueChanged(listBoxDactile, e);
             }
+        }
+
+        private void btnTrain_Click(object sender, EventArgs e)
+        {
+            var trainFolder = Settings.GetTrainFolderName();
+            var graphFile = Settings.GetOutputGraphName();
+            var labelsFile = Settings.GetOutputLabelsName();
+
+            var p = new Process();
+            var psi = new ProcessStartInfo();
+            psi.FileName = "cmd.exe";
+            psi.Arguments = $"/K python retrain.py --image_dir {trainFolder} --output_graph {graphFile} --output_labels {labelsFile}";
+            p.StartInfo = psi;
+            p.Start();
+            p.WaitForExit();
         }
     }
 }

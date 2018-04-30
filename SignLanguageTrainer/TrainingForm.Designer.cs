@@ -28,9 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.listBoxDactile = new System.Windows.Forms.ListBox();
-            this.groupBoxConsole = new System.Windows.Forms.GroupBox();
             this.groupBoxDactil = new System.Windows.Forms.GroupBox();
             this.listViewGestures = new System.Windows.Forms.ListView();
             this.groupBoxGestures = new System.Windows.Forms.GroupBox();
@@ -39,24 +37,11 @@
             this.pictureBoxGesture = new System.Windows.Forms.PictureBox();
             this.btnDelete = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
-            this.groupBoxConsole.SuspendLayout();
             this.groupBoxDactil.SuspendLayout();
             this.groupBoxGestures.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGesture)).BeginInit();
             this.SuspendLayout();
-            // 
-            // textBox1
-            // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Location = new System.Drawing.Point(3, 16);
-            this.textBox1.MaxLength = 0;
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(1406, 160);
-            this.textBox1.TabIndex = 0;
             // 
             // listBoxDactile
             // 
@@ -67,16 +52,6 @@
             this.listBoxDactile.Size = new System.Drawing.Size(272, 403);
             this.listBoxDactile.TabIndex = 1;
             this.listBoxDactile.SelectedValueChanged += new System.EventHandler(this.listBoxDactile_SelectedValueChanged);
-            // 
-            // groupBoxConsole
-            // 
-            this.groupBoxConsole.Controls.Add(this.textBox1);
-            this.groupBoxConsole.Location = new System.Drawing.Point(12, 440);
-            this.groupBoxConsole.Name = "groupBoxConsole";
-            this.groupBoxConsole.Size = new System.Drawing.Size(1412, 179);
-            this.groupBoxConsole.TabIndex = 2;
-            this.groupBoxConsole.TabStop = false;
-            this.groupBoxConsole.Text = "Консоль";
             // 
             // groupBoxDactil
             // 
@@ -112,12 +87,13 @@
             // 
             // btnTrain
             // 
-            this.btnTrain.Location = new System.Drawing.Point(1430, 456);
+            this.btnTrain.Location = new System.Drawing.Point(1406, 392);
             this.btnTrain.Name = "btnTrain";
-            this.btnTrain.Size = new System.Drawing.Size(84, 163);
+            this.btnTrain.Size = new System.Drawing.Size(105, 39);
             this.btnTrain.TabIndex = 6;
             this.btnTrain.Text = "Обучить";
             this.btnTrain.UseVisualStyleBackColor = true;
+            this.btnTrain.Click += new System.EventHandler(this.btnTrain_Click);
             // 
             // groupBox1
             // 
@@ -143,7 +119,7 @@
             // 
             this.btnDelete.Location = new System.Drawing.Point(1104, 392);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(189, 39);
+            this.btnDelete.Size = new System.Drawing.Size(128, 39);
             this.btnDelete.TabIndex = 8;
             this.btnDelete.Text = "Удалить";
             this.btnDelete.UseVisualStyleBackColor = true;
@@ -151,9 +127,9 @@
             // 
             // buttonAdd
             // 
-            this.buttonAdd.Location = new System.Drawing.Point(1323, 392);
+            this.buttonAdd.Location = new System.Drawing.Point(1238, 392);
             this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(188, 39);
+            this.buttonAdd.Size = new System.Drawing.Size(162, 39);
             this.buttonAdd.TabIndex = 9;
             this.buttonAdd.Text = "Добавить снимков";
             this.buttonAdd.UseVisualStyleBackColor = true;
@@ -163,22 +139,19 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1526, 631);
+            this.ClientSize = new System.Drawing.Size(1526, 451);
             this.Controls.Add(this.buttonAdd);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnTrain);
             this.Controls.Add(this.groupBoxGestures);
             this.Controls.Add(this.groupBoxDactil);
-            this.Controls.Add(this.groupBoxConsole);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "TrainingForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Training Tool";
             this.Load += new System.EventHandler(this.TrainingForm_Load);
-            this.groupBoxConsole.ResumeLayout(false);
-            this.groupBoxConsole.PerformLayout();
             this.groupBoxDactil.ResumeLayout(false);
             this.groupBoxGestures.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -188,10 +161,7 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.ListBox listBoxDactile;
-        private System.Windows.Forms.GroupBox groupBoxConsole;
         private System.Windows.Forms.GroupBox groupBoxDactil;
         private System.Windows.Forms.ListView listViewGestures;
         private System.Windows.Forms.GroupBox groupBoxGestures;
