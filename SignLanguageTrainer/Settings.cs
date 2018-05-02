@@ -64,7 +64,7 @@ namespace SignLanguageTrainer
         /// </summary>
         public static string GetOutputLabelsName()
         {
-            var func = GetScript().Globals.Get("getOutputGraph");
+            var func = GetScript().Globals.Get("getOutputLabels");
             var name = func.Function.Call().CastToString();
 
             return name;

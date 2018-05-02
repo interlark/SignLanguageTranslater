@@ -34,7 +34,7 @@ function getTranslatedFolders ()
 		["ie"] = "э",
 		["yu"] = "ю",
 		["ya"] = "я",
-		["_"] = " ",
+		["space"] = " ",
 		["comma"] = ",",
 		["dot"] = "."
 	}
