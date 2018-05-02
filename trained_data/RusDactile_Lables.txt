@@ -1,0 +1,36 @@
+a
+b
+ch
+comma
+d
+dot
+e
+f
+g
+h
+i
+ie
+k
+l
+m
+n
+o
+p
+r
+s
+sch
+sh
+soft sign
+solid sign
+space
+t
+ts
+u
+v
+y
+ya
+yi
+yo
+yu
+z
+zh
