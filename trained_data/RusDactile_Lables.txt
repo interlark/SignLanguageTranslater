@@ -20,8 +20,8 @@ r
 s
 sch
 sh
-soft sign
-solid sign
+softsign
+solidsign
 space
 t
 ts

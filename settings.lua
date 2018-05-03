@@ -28,9 +28,9 @@ function getTranslatedFolders ()
 		["ch"] = "ч",
 		["sh"] = "ш",
 		["sch"] = "щ",
-		["solid_sign"] = "ъ",
+		["solidsign"] = "ъ",
 		["y"] = "ы",
-		["soft_sign"] = "ь",
+		["softsign"] = "ь",
 		["ie"] = "э",
 		["yu"] = "ю",
 		["ya"] = "я",
@@ -49,12 +49,12 @@ end
 
 --Название графа на выходе
 function getOutputGraph ()
-	return "RusDactile_Graph.pb"
+	return "rusdactile_graph.pb"
 end
 
 --Файл символов на выходе
 function getOutputLabels ()
-	return "RusDactile_Lables.txt"
+	return "rusdactile_lables.txt"
 end
 
 --Укказываем порог для выделения жеста в метрах.

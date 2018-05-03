@@ -146,7 +146,7 @@ namespace SignLanguageTrainer
             var p = new Process();
             var psi = new ProcessStartInfo();
             psi.FileName = "cmd.exe";
-            psi.Arguments = $"/K python retrain.py --image_dir {trainFolder} --output_graph {graphFile} --output_labels {labelsFile}";
+            psi.Arguments = $"/K python train.py --image_dir {trainFolder} --output_graph {graphFile} --output_labels {labelsFile}";
             p.StartInfo = psi;
             p.Start();
             p.WaitForExit();

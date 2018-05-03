@@ -16,7 +16,7 @@ namespace SignLanguageTranslater
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new RecofnitionForm());
+            Application.Run(new StartForm());
         }
     }
 }

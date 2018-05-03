@@ -20,7 +20,7 @@ namespace SignLanguageTrainer
 
         KinectSensor sensor = null;
         MultiSourceFrameReader frameReader = null;
-        IList<Body> _bodies;
+        //IList<Body> _bodies;
 
         /// <summary>
         /// Необработанный массив данных полученный через глубинный сенсор.
