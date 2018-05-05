@@ -11,6 +11,9 @@ using Microsoft.Kinect;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Media;
+using System.Threading;
+using TensorFlow;
+using System.Diagnostics;
 
 namespace SignLanguageTranslater
 {
@@ -18,7 +21,16 @@ namespace SignLanguageTranslater
     {
         public string GraphPath { get; set; }
         public string LabelsPath { get; set; }
+
         public int SkipFrames { get; set; } = 0;
+
+        public uint probabilityFlush { get; set; } = 12;
+
+        private uint probabilityFrameCounter = 0;
+
+        //TimeSpan previousFrameTimeCapture = DateTime.Now.TimeOfDay;
+
+        private Dictionary<string, string> translatedFolders = Settings.GetTranslatedFolders();
 
         KinectSensor sensor = null;
         MultiSourceFrameReader frameReader = null;
@@ -34,6 +46,7 @@ namespace SignLanguageTranslater
         //private ushort[] rawIRPixelData = null;
 
         //private CameraSpacePoint[] csp = null;
+
 
         public CaptureGesturesForm()
         {
@@ -62,7 +75,7 @@ namespace SignLanguageTranslater
                                 this.sensor.Open();
 
                                 // Открываем multi-source reader фреймов для сенсоров
-                                this.frameReader = this.sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Color/* | FrameSourceTypes.Depth | FrameSourceTypes.Infrared | FrameSourceTypes.Body*/);
+                                this.frameReader = this.sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Color /*| FrameSourceTypes.Depth | FrameSourceTypes.Infrared | FrameSourceTypes.Body | FrameSourceTypes.BodyIndex*/);
 
                                 // Получаем описание сенсоров
                                 // Kinect version 2:
@@ -80,6 +93,10 @@ namespace SignLanguageTranslater
                                 //this.csp = new CameraSpacePoint[colorFrameDescription.Width * colorFrameDescription.Height * 1];
                                 // Указываем callback для полученных кадров из framereader'а
 
+                                if(!Directory.Exists("tmp"))
+                                {
+                                    Directory.CreateDirectory("tmp");
+                                }
 
                                 this.frameReader.MultiSourceFrameArrived += frameReader_MultiSourceFrameArrived;
                             }
@@ -171,24 +188,73 @@ namespace SignLanguageTranslater
                         //    }
                         //}
 
-                        Bitmap img = this.pictureBoxCameraColor.Image as Bitmap;
+                        // правой руки нет в камере - отменяем слежку (отмена, вдруг поднесут изображение, в рамках курсовой пусть будет так)
+
+                        //var bodyFrames = frame.BodyFrameReference.AcquireFrame();
+                        //if (bodyFrames != null)
+                        //{
+                        //    var bodies = new Body[bodyFrames.BodyFrameSource.BodyCount];
+                        //    bodyFrames.GetAndRefreshBodyData(bodies);
+                        //    var bodyFrame = bodies.FirstOrDefault();
+                        //    if (bodyFrame == null || !bodyFrame.IsTracked || bodyFrame.Joints[JointType.HandRight].TrackingState != TrackingState.Tracked)
+                        //    {
+                        //        this.probabilityFrameCounter = 0;
+                        //        this.probabilities.Clear();
+                        //    }
+                        //    else
+
+                        // ...
+
+                        // В зависимости от освещения, Kinect V2 Color Stream переклюяается в 15 fps и 30 fps.
+                        //int fps = (frame.ColorFrameReference.RelativeTime- previousFrameTimeCapture).Seconds;
+                        //previousFrameTimeCapture = frame.ColorFrameReference.RelativeTime;
+
+                        var img = this.pictureBoxCameraColor.Image;
+
                         if (img != null)
                         {
-                            Rectangle rec = new Rectangle(img.Width / 2 + img.Width / 8 + 2, img.Height / 2 - img.Height / 4 + 2, img.Width / 4 - 4, img.Height / 4 - 4);
-                            Bitmap target = new Bitmap(rec.Width, rec.Height);
 
-                            using (Graphics g = Graphics.FromImage(target))
+
+                            var frameID = this.probabilityFrameCounter++;
+
+                            TFGraph g = new TFGraph();
+                            var model = File.ReadAllBytes(this.GraphPath);
+                            g.Import(model, "");
+                            var labels = File.ReadAllLines(this.LabelsPath);
+                            var session = new TFSession(g);
+                            var g_input = g["Mul"][0];
+                            var g_output = g["final_result"][0];
+                            var runner = session.GetRunner();
+
+
+                            var tensor = ImageUtil.CreateTensorFromImageFile(img);
+
+                            runner.AddInput(g_input, tensor).Fetch(g_output);
+                            var output = runner.Run();
+
+                            var bestIdx = 0;
+                            float best = 0;
+                            var result = output[0];
+                            var rshape = result.Shape;
+                            var probabilities = ((float[][])result.GetValue(jagged: true))[0];
+                            for (int r = 0; r < probabilities.Length; r++)
                             {
-                                g.DrawImage(img, new Rectangle(0, 0, target.Width, target.Height),
-                                                 rec,
-                                                 GraphicsUnit.Pixel);
+                                if (probabilities[r] > best)
+                                {
+                                    bestIdx = r;
+                                    best = probabilities[r];
+                                }
                             }
 
-                            var gesture = target;
-
-                            //todo: recognition
-
+                            Debug.WriteLine("Tensorflow thinks this is: " + labels[bestIdx] + " Prob : " + best * 100);
                         }
+
+                        //if (frameID % 150 == 0)
+                        //{
+                        //    var img = this.pictureBoxCameraColor.Image.Clone() as Image;
+                          //  StartRecognitionThread(img, frameID,
+                            //    new Action<Dictionary<string, float>>(CollectImageRecognizes));
+                        //}
                     }
                     catch (Exception ex)
                     {
@@ -203,11 +269,59 @@ namespace SignLanguageTranslater
             }
         }
 
-    /// <summary>
-    /// Метод отрисовки обычной камеры из цветного фрейма
-    /// </summary>
-    /// <param name="frameReference">Ссылка на цветной фрейм.</param>
-    private void useRGBAImage(ColorFrameReference frameReference)
+        //public Thread StartRecognitionThread(Image img, uint frameID, Action<Dictionary<string, float>> callback)
+        //{
+        //    var t = new Thread(() => ThreadRecognition(img, frameID, callback));
+        //    t.Priority = ThreadPriority.Highest;
+        //    t.IsBackground = true;
+        //    t.Start();
+        //    return t;
+        //}
+
+        //private void ThreadRecognition(Image img, uint frameID, Action<Dictionary<string, float>> callback)
+        //{
+        //    if (img != null)
+        //    {
+        //        var probabilities = new Dictionary<string, float>();
+        //        var rec = new Rectangle(img.Width / 2 + img.Width / 8 + 2, img.Height / 2 - img.Height / 4 + 2, img.Width / 4 - 4, img.Height / 4 - 4);
+        //        var gesture = new Bitmap(rec.Width, rec.Height);
+
+        //        using (var g = Graphics.FromImage(gesture))
+        //        {
+        //            g.DrawImage(img, new Rectangle(0, 0, gesture.Width, gesture.Height),
+        //                                rec,
+        //                                GraphicsUnit.Pixel);
+        //        }
+
+        //        var tmpGesturePath = Path.Combine("tmp", $"image_thread_{frameID}");
+
+        //        gesture.Save(tmpGesturePath, ImageFormat.Jpeg);
+
+        //        Tensor imageTensor = ImageIO.ReadTensorFromImageFile(tmpGesturePath, 299, 299, 250.0f, 1.0f / 250.0f);
+
+        //        var inceptionGraph = new Inception(null, new string[] { this.GraphPath, this.LabelsPath }, null, "Mul", "final_result");
+
+        //        float[] probability = inceptionGraph.Recognize(imageTensor);
+
+        //        for (int index = 0; index < probability.Length; ++index)
+        //        {
+        //            probabilities.Add(inceptionGraph.Labels[index], probability[index]);
+        //        }
+
+        //        callback(probabilities);
+        //    }
+        //}
+
+        void CollectImageRecognizes(Dictionary<string, float> probabilities)
+        {
+
+        }
+
+        /// <summary>
+        /// Метод отрисовки обычной камеры из цветного фрейма
+        /// </summary>
+        /// <param name="frameReference">Ссылка на цветной фрейм.</param>
+        private void useRGBAImage(ColorFrameReference frameReference)
         {
             // Попытка получить текущий фрейм с сенсора
             ColorFrame frame = frameReference.AcquireFrame();
@@ -254,7 +368,7 @@ namespace SignLanguageTranslater
         {
             using (Graphics gr = Graphics.FromImage(img))
             {
-                gr.DrawRectangle(new Pen(Color.Red, 2), new Rectangle(img.Width / 2 + img.Width / 8, img.Height / 2 - img.Height/4, img.Width / 4, img.Height / 4));
+                gr.DrawRectangle(new Pen(Color.Red, 2), new Rectangle(img.Width / 2 + img.Width / 8, img.Height / 2 - img.Height / 4, img.Width / 8 + img.Width / 8 / 8, img.Height / 4));
             }
 
             return img;

@@ -20,7 +20,7 @@ namespace SignLanguageTrainer
         /// <summary>
         /// Получение ассоциативного массива транслитерованных папак и их русское отображение
         /// </summary>
-        public static IDictionary<string, string> GetTranslatedFolders()
+        public static Dictionary<string, string> GetTranslatedFolders()
         {
             var func = GetScript().Globals.Get("getTranslatedFolders");
             var table = func.Function.Call().Table;

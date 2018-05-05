@@ -167,7 +167,7 @@ namespace SignLanguageTrainer
                         //}
 
                         Bitmap img = this.pictureBoxCameraColor.Image as Bitmap;
-                        Rectangle rec = new Rectangle(img.Width / 2 + img.Width / 8 + 2, img.Height / 2 - img.Height / 4 + 2, img.Width / 4 - 4, img.Height / 4 - 4);
+                        Rectangle rec = new Rectangle(img.Width / 2 + img.Width / 8 + 2, img.Height / 2 - img.Height / 4 + 2, img.Width / 8 + img.Width / 8 / 8 - 4, img.Height / 4 - 4);
                         Bitmap target = new Bitmap(rec.Width, rec.Height);
 
                         using (Graphics g = Graphics.FromImage(target))
@@ -525,7 +525,7 @@ namespace SignLanguageTrainer
         {
             using (Graphics gr = Graphics.FromImage(img))
             {
-                gr.DrawRectangle(new Pen(Color.Red, 2), new Rectangle(img.Width / 2 + img.Width / 8, img.Height / 2 - img.Height/4, img.Width / 4, img.Height / 4));
+                gr.DrawRectangle(new Pen(Color.Red, 2), new Rectangle(img.Width / 2 + img.Width / 8, img.Height / 2 - img.Height / 4, img.Width / 8 + img.Width / 8 / 8, img.Height / 4));
             }
 
             return img;

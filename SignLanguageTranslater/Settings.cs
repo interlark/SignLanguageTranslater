@@ -13,7 +13,7 @@ namespace SignLanguageTranslater
         /// <summary>
         /// Получение ассоциативного массива транслитерованных папак и их русское отображение
         /// </summary>
-        public static IDictionary<string, string> GetTranslatedFolders()
+        public static Dictionary<string, string> GetTranslatedFolders()
         {
             var script = new Script();
             script.Options.ScriptLoader = new FileSystemScriptLoader();

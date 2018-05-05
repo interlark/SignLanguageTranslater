@@ -55,6 +55,7 @@ namespace SignLanguageTranslater
                 gestureTranslator.GraphPath = textBoxGraph.Text;
                 gestureTranslator.LabelsPath = textBoxLabels.Text;
                 gestureTranslator.SkipFrames = (int)numericUpDownSkipFrames.Value;
+                gestureTranslator.probabilityFlush = (uint)numericUpDownFrameQueue.Value;
                 gestureTranslator.ShowDialog();
             }
             else
@@ -65,6 +66,14 @@ namespace SignLanguageTranslater
         }
 
         private void numericUpDownSkipFrames_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar < 48 || e.KeyChar > 57)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void numericUpDownFrameQueue_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar < 48 || e.KeyChar > 57)
             {

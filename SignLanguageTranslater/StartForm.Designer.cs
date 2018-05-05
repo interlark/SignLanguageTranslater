@@ -40,11 +40,15 @@
             this.btnStart = new System.Windows.Forms.Button();
             this.groupBoxSkipFrames = new System.Windows.Forms.GroupBox();
             this.numericUpDownSkipFrames = new System.Windows.Forms.NumericUpDown();
+            this.groupBoxFrameQueue = new System.Windows.Forms.GroupBox();
+            this.numericUpDownFrameQueue = new System.Windows.Forms.NumericUpDown();
             this.groupBoxPB.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBoxTranslateMode.SuspendLayout();
             this.groupBoxSkipFrames.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSkipFrames)).BeginInit();
+            this.groupBoxFrameQueue.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrameQueue)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBoxPB
@@ -171,11 +175,35 @@
             0});
             this.numericUpDownSkipFrames.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numericUpDownSkipFrames_KeyPress);
             // 
+            // groupBoxFrameQueue
+            // 
+            this.groupBoxFrameQueue.Controls.Add(this.numericUpDownFrameQueue);
+            this.groupBoxFrameQueue.Location = new System.Drawing.Point(219, 230);
+            this.groupBoxFrameQueue.Name = "groupBoxFrameQueue";
+            this.groupBoxFrameQueue.Size = new System.Drawing.Size(192, 50);
+            this.groupBoxFrameQueue.TabIndex = 4;
+            this.groupBoxFrameQueue.TabStop = false;
+            this.groupBoxFrameQueue.Text = "Очередь кадров";
+            // 
+            // numericUpDownFrameQueue
+            // 
+            this.numericUpDownFrameQueue.Location = new System.Drawing.Point(15, 19);
+            this.numericUpDownFrameQueue.Name = "numericUpDownFrameQueue";
+            this.numericUpDownFrameQueue.Size = new System.Drawing.Size(160, 20);
+            this.numericUpDownFrameQueue.TabIndex = 0;
+            this.numericUpDownFrameQueue.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericUpDownFrameQueue.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numericUpDownFrameQueue_KeyPress);
+            // 
             // StartForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(675, 292);
+            this.Controls.Add(this.groupBoxFrameQueue);
             this.Controls.Add(this.groupBoxSkipFrames);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.groupBoxTranslateMode);
@@ -193,6 +221,8 @@
             this.groupBoxTranslateMode.PerformLayout();
             this.groupBoxSkipFrames.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSkipFrames)).EndInit();
+            this.groupBoxFrameQueue.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFrameQueue)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -211,6 +241,8 @@
         private System.Windows.Forms.TextBox textBoxLabels;
         private System.Windows.Forms.GroupBox groupBoxSkipFrames;
         private System.Windows.Forms.NumericUpDown numericUpDownSkipFrames;
+        private System.Windows.Forms.GroupBox groupBoxFrameQueue;
+        private System.Windows.Forms.NumericUpDown numericUpDownFrameQueue;
     }
 }
 
