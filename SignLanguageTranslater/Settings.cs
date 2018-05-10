@@ -11,14 +11,21 @@ namespace SignLanguageTranslater
     public static class Settings
     {
         /// <summary>
-        /// Получение ассоциативного массива транслитерованных папак и их русское отображение
+        /// Получение скрипта на лету (с изменениями)
         /// </summary>
-        public static Dictionary<string, string> GetTranslatedFolders()
+        internal static Script GetScript()
         {
             var script = new Script();
             script.Options.ScriptLoader = new FileSystemScriptLoader();
             script.DoFile("settings.lua");
-            var func = script.Globals.Get("getTranslatedFolders");
+            return script;
+        }
+        /// <summary>
+        /// Получение ассоциативного массива транслитерованных папак и их русское отображение
+        /// </summary>
+        public static Dictionary<string, string> GetTranslatedFolders()
+        {
+            var func = GetScript().Globals.Get("getTranslatedFolders");
             var table = func.Function.Call().Table;
 
             var dic = new Dictionary<string, string>();
@@ -32,5 +39,15 @@ namespace SignLanguageTranslater
 
             return dic;
         }
+
+        public static float GetImageRecognizedThresold()
+        {
+            var func = GetScript().Globals.Get("getImageRecognizedThresold");
+            var threshold = func.Function.Call().CastToNumber();
+
+            return (float)threshold;
+        }
+
+        //
     }
 }

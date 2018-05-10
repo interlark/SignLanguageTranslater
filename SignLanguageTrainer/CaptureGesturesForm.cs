@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using Microsoft.Kinect;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Microsoft.Kinect;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Media;
+using System.Windows.Forms;
 
 namespace SignLanguageTrainer
 {
@@ -517,7 +511,9 @@ namespace SignLanguageTrainer
 
                 var filename = DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss-ffff") + ".jpg";
                 var path = System.IO.Path.Combine(this.Path, filename);
-                new Bitmap(this.pictureBoxGesture.Image.Clone() as Image).Save(path, ImageFormat.Jpeg);
+                var img = this.pictureBoxGesture.Image.Clone() as Image;
+                var imgBmp = ImageUtil.ResizeImage(img, 224, 224); // model MobileNet_v1_1.0_224
+                imgBmp.Save(path, ImageFormat.Jpeg);
             }
         }
 

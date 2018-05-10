@@ -57,7 +57,12 @@ function getOutputLabels ()
 	return "rusdactile_lables.txt"
 end
 
---Укказываем порог для выделения жеста в метрах.
+--Указываем порог для выделения жеста в метрах. (при его поиске в глубину - todo)
 function getGestureDepthThresold ()
     return 0.04;
+end
+
+--Указываем порог распознан ли символ из модели.
+function getImageRecognizedThresold ()
+    return 50;
 end

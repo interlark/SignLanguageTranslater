@@ -41,15 +41,38 @@ The subfolder names are important, since they define what label is applied to
 each image, but the filenames themselves don't matter. Once your images are
 prepared, you can run the training with a command like this:
 
+
+```bash
+bazel build tensorflow/examples/image_retraining:retrain && \
+bazel-bin/tensorflow/examples/image_retraining/retrain \
+    --image_dir ~/flower_photos
+```
+
+Or, if you have a pip installation of tensorflow, `retrain.py` can be run
+without bazel:
+
+```bash
+python tensorflow/examples/image_retraining/retrain.py \
+    --image_dir ~/flower_photos
+```
+
 You can replace the image_dir argument with any folder containing subfolders of
 images. The label for each image is taken from the name of the subfolder it's
 in.
+
+This produces a new model file that can be loaded and run by any TensorFlow
+program, for example the label_image sample code.
 
 By default this script will use the high accuracy, but comparatively large and
 slow Inception v3 model architecture. It's recommended that you start with this
 to validate that you have gathered good training data, but if you want to deploy
 on resource-limited platforms, you can try the `--architecture` flag with a
-Mobilenet model.
+Mobilenet model. For example:
+
+```bash
+python tensorflow/examples/image_retraining/retrain.py \
+    --image_dir ~/flower_photos --architecture mobilenet_1.0_224
+```
 
 There are 32 different Mobilenet models to choose from, with a variety of file
 size and latency options. The first number can be '1.0', '0.75', '0.50', or
@@ -71,31 +94,33 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from google.protobuf import text_format
-
-from tensorflow.core.framework import graph_pb2
-from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import graph_io
-from tensorflow.python.platform import app
-from tensorflow.python.platform import gfile
-from tensorflow.python.tools import optimize_for_inference_lib
-from tensorflow.python.framework import graph_util
-from tensorflow.python.framework import tensor_shape
-from tensorflow.python.util import compat
-
 import argparse
 from datetime import datetime
 import hashlib
-import os
 import os.path
 import random
 import re
 import sys
 import tarfile
 import tempfile
+
+import os
+
+from google.protobuf import text_format
+
+from tensorflow.core.framework import graph_pb2
+from tensorflow.python.framework import dtypes
+from tensorflow.python.framework import graph_io
+from tensorflow.python.platform import app
+from tensorflow.python.tools import optimize_for_inference_lib
 import numpy as np
 from six.moves import urllib
 import tensorflow as tf
+
+from tensorflow.python.framework import graph_util
+from tensorflow.python.framework import tensor_shape
+from tensorflow.python.platform import gfile
+from tensorflow.python.util import compat
 
 FLAGS = None
 
@@ -1021,11 +1046,11 @@ def main(_):
 
     # Merge all the summaries and write them out to the summaries_dir
     merged = tf.summary.merge_all()
-    train_writer = tf.summary.FileWriter(FLAGS.summaries_dir + os.path.sep + 'train',
+    train_writer = tf.summary.FileWriter(FLAGS.summaries_dir + os.path.sep +'train',
                                          sess.graph)
 
     validation_writer = tf.summary.FileWriter(
-        FLAGS.summaries_dir + os.path.sep + 'validation')
+        FLAGS.summaries_dir + os.path.sep +'validation')
 
     # Set up all our weights to their initial default values.
     init = tf.global_variables_initializer()
@@ -1107,6 +1132,8 @@ def main(_):
         [evaluation_step, prediction],
         feed_dict={bottleneck_input: test_bottlenecks,
                    ground_truth_input: test_ground_truth})
+    tf.logging.info('Final test accuracy = %.1f%% (N=%d)' %
+                    (test_accuracy * 100, len(test_bottlenecks)))
 
     if FLAGS.print_misclassified_test_images:
       tf.logging.info('=== MISCLASSIFIED TEST IMAGES ===')
@@ -1116,25 +1143,27 @@ def main(_):
                           (test_filename,
                            list(image_lists.keys())[predictions[i]]))
 
-    tf.logging.info('Optimizing for inference...');
-	
-    graph_def = graph_util.convert_variables_to_constants(
-      sess, graph.as_graph_def(), [FLAGS.final_tensor_name])
-	  
-    output_graph_def = optimize_for_inference_lib.optimize_for_inference(
-      graph_def,
-      ['Mul'],
-      ['final_result'], 
-	  dtypes.float32.as_datatype_enum)
-	
-    f = gfile.FastGFile(FLAGS.output_graph, "w")
-    f.write(output_graph_def.SerializeToString())
-	
+    # Write out the trained graph and labels with the weights stored as
+    # constants.
+    save_graph_to_file(sess, graph, FLAGS.output_graph)
     with gfile.FastGFile(FLAGS.output_labels, 'w') as f:
       f.write('\n'.join(image_lists.keys()) + '\n')
+    #tf.logging.info('Optimizing for inference...')
     
-    tf.logging.info('Final test accuracy = %.1f%% (N=%d)' %
-                    (test_accuracy * 100, len(test_bottlenecks)))
+    #input_graph_def = output_graph_def = graph_util.convert_variables_to_constants(
+    #  sess, graph.as_graph_def(), [FLAGS.final_tensor_name])
+    #
+    #output_graph_def = optimize_for_inference_lib.optimize_for_inference(
+    #  input_graph_def,
+    #  ['input'],
+    #  ['final_result'],
+    #  dtypes.float32.as_datatype_enum)
+    #
+    #with gfile.FastGFile(FLAGS.output_graph, 'wb') as f:
+    #  f.write(output_graph_def.SerializeToString())
+    #
+    #with gfile.FastGFile(FLAGS.output_labels, 'w') as f:
+    #  f.write('\n'.join(image_lists.keys()) + '\n')
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -1147,13 +1176,13 @@ if __name__ == '__main__':
   parser.add_argument(
       '--output_graph',
       type=str,
-      default=os.path.join(os.path.sep, tempfile.gettempdir(),'output_graph.pb'),
+      default=os.path.join(os.path.sep, tempfile.gettempdir(), 'output_graph.pb'),
       help='Where to save the trained graph.'
   )
   parser.add_argument(
       '--intermediate_output_graphs_dir',
       type=str,
-      default=os.path.join(os.path.sep, tempfile.gettempdir(),'intermediate_graph', os.path.sep),
+      default=os.path.join(os.path.sep, tempfile.gettempdir(), 'intermediate_graph', os.path.sep),
       help='Where to save the intermediate graphs.'
   )
   parser.add_argument(
@@ -1174,43 +1203,43 @@ if __name__ == '__main__':
   parser.add_argument(
       '--summaries_dir',
       type=str,
-      default=os.path.join(os.path.sep, tempfile.gettempdir(),'retrain_logs'),
+      default=os.path.join(os.path.sep, tempfile.gettempdir(), 'retrain_logs'),
       help='Where to save summary logs for TensorBoard.'
   )
   parser.add_argument(
       '--how_many_training_steps',
       type=int,
-      default=5000,
+      default=11000,
       help='How many training steps to run before ending.'
   )
   parser.add_argument(
       '--learning_rate',
       type=float,
-      default=0.01,
+      default=0.001,
       help='How large a learning rate to use when training.'
   )
   parser.add_argument(
       '--testing_percentage',
       type=int,
-      default=10,
+      default=20,
       help='What percentage of images to use as a test set.'
   )
   parser.add_argument(
       '--validation_percentage',
       type=int,
-      default=10,
+      default=20,
       help='What percentage of images to use as a validation set.'
   )
   parser.add_argument(
       '--eval_step_interval',
       type=int,
-      default=10,
+      default=100,
       help='How often to evaluate the training results.'
   )
   parser.add_argument(
       '--train_batch_size',
       type=int,
-      default=100,
+      default=32,
       help='How many images to train on at a time.'
   )
   parser.add_argument(
@@ -1227,7 +1256,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--validation_batch_size',
       type=int,
-      default=100,
+      default=-1,
       help="""\
       How many images to use in an evaluation batch. This validation set is
       used much more often than the test set, and is an early indicator of how
@@ -1239,7 +1268,7 @@ if __name__ == '__main__':
   )
   parser.add_argument(
       '--print_misclassified_test_images',
-      default=False,
+      default=True,
       help="""\
       Whether to print out a list of all misclassified test images.\
       """,
@@ -1307,9 +1336,10 @@ if __name__ == '__main__':
   parser.add_argument(
       '--architecture',
       type=str,
-      default='inception_v3',
-      help="""\
-      Which model architecture to use. 'inception_v3' is the most accurate, but
+      default='mobilenet_1.0_224',
+      #default='inception_v3',
+	  help="""\
+      Which model architecture to use. 'CreateTensorFromImageFile' is the most accurate, but
       also the slowest. For faster or smaller models, chose a MobileNet with the
       form 'mobilenet_<parameter size>_<input_size>[_quantized]'. For example,
       'mobilenet_1.0_224' will pick a model that is 17 MB in size and takes 224
@@ -1319,4 +1349,5 @@ if __name__ == '__main__':
       for more information on Mobilenet.\
       """)
   FLAGS, unparsed = parser.parse_known_args()
+  
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

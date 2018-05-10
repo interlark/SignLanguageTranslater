@@ -168,11 +168,6 @@
             this.numericUpDownSkipFrames.Name = "numericUpDownSkipFrames";
             this.numericUpDownSkipFrames.Size = new System.Drawing.Size(160, 20);
             this.numericUpDownSkipFrames.TabIndex = 0;
-            this.numericUpDownSkipFrames.Value = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
             this.numericUpDownSkipFrames.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numericUpDownSkipFrames_KeyPress);
             // 
             // groupBoxFrameQueue
@@ -192,7 +187,7 @@
             this.numericUpDownFrameQueue.Size = new System.Drawing.Size(160, 20);
             this.numericUpDownFrameQueue.TabIndex = 0;
             this.numericUpDownFrameQueue.Value = new decimal(new int[] {
-            2,
+            4,
             0,
             0,
             0});

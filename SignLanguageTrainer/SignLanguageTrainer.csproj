@@ -89,6 +89,7 @@
     <Compile Include="CaptureGesturesForm.Designer.cs">
       <DependentUpon>CaptureGesturesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImageUtil.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TrainingForm.cs">
       <SubType>Form</SubType>

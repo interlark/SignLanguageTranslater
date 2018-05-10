@@ -16,9 +16,6 @@ namespace SignLanguageTranslater
         public StartForm()
         {
             InitializeComponent();
-
-
-
         }
 
         private void btnGraphBrowse_Click(object sender, EventArgs e)
@@ -55,7 +52,7 @@ namespace SignLanguageTranslater
                 gestureTranslator.GraphPath = textBoxGraph.Text;
                 gestureTranslator.LabelsPath = textBoxLabels.Text;
                 gestureTranslator.SkipFrames = (int)numericUpDownSkipFrames.Value;
-                gestureTranslator.probabilityFlush = (uint)numericUpDownFrameQueue.Value;
+                gestureTranslator.ProbabilityQueueSize = (int)numericUpDownFrameQueue.Value;
                 gestureTranslator.ShowDialog();
             }
             else

@@ -12,7 +12,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Media;
 using System.Threading;
-using TensorFlow;
 using System.Diagnostics;
 
 namespace SignLanguageTranslater
@@ -24,16 +23,19 @@ namespace SignLanguageTranslater
 
         public int SkipFrames { get; set; } = 0;
 
-        public uint probabilityFlush { get; set; } = 12;
+        public int ProbabilityQueueSize { get; set; } = 6;
 
-        private uint probabilityFrameCounter = 0;
-
-        //TimeSpan previousFrameTimeCapture = DateTime.Now.TimeOfDay;
+        private string tmpImageFileName = "tmp_frame.jpg";
 
         private Dictionary<string, string> translatedFolders = Settings.GetTranslatedFolders();
 
+        private TensorflowRecognizer imgRecognizer = null;
+
+        private Image sharedImage = null;
+
         KinectSensor sensor = null;
         MultiSourceFrameReader frameReader = null;
+
         //IList<Body> _bodies;
 
         /// <summary>
@@ -93,10 +95,10 @@ namespace SignLanguageTranslater
                                 //this.csp = new CameraSpacePoint[colorFrameDescription.Width * colorFrameDescription.Height * 1];
                                 // Указываем callback для полученных кадров из framereader'а
 
-                                if(!Directory.Exists("tmp"))
-                                {
-                                    Directory.CreateDirectory("tmp");
-                                }
+                                this.imgRecognizer = new TensorflowRecognizer(this.GraphPath, this.LabelsPath, this.HandleSymbol, tmpImageFileName, SaveSharedImage,
+                                    this.ProbabilityQueueSize, this.SkipFrames);
+
+                                this.imgRecognizer.Start();
 
                                 this.frameReader.MultiSourceFrameArrived += frameReader_MultiSourceFrameArrived;
                             }
@@ -116,18 +118,53 @@ namespace SignLanguageTranslater
             }
         }
 
+        //private void InitEgmuTF()
+        //{
+        //    this.imgRecognizer = new TensorflowRecognizer(this.GraphPath, this.LabelsPath, this.HandleSymbol, tmpImageFileName, SaveSharedImage,
+        //    this.ProbabilityQueueSize, this.SkipFrames);
+
+        //    this.imgRecognizer.Start();
+        //}
+
+        private void HandleSymbol(string symbol, float probability)
+        {
+            this.Invoke(new Action(() =>
+            {
+                //this.imgRecognizer.Stop();
+                Debug.WriteLine(String.Format("Object is {0} with {1}% probability.", symbol, probability));
+                //InitEgmuTF();
+
+                if (probability >= Settings.GetImageRecognizedThresold())
+                {
+                    Font f = new Font("Arial", 24, FontStyle.Bold);
+                    var img = DrawText(this.translatedFolders[symbol], f, Color.Black, Color.White);
+                    this.pictureBoxTranslatedGesture.Image = img;
+                }
+            }));
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
 
-            if (frameReader != null)
+            if (this.imgRecognizer != null)
+            {
+                this.imgRecognizer.Stop();
+            }
+
+            if (this.frameReader != null)
             {
                 frameReader.Dispose();
             }
 
-            if (sensor != null)
+            if (this.sensor != null)
             {
                 sensor.Close();
+            }
+
+            if (File.Exists(this.tmpImageFileName))
+            {
+                File.Delete(this.tmpImageFileName);
             }
         }
 
@@ -209,44 +246,64 @@ namespace SignLanguageTranslater
                         //int fps = (frame.ColorFrameReference.RelativeTime- previousFrameTimeCapture).Seconds;
                         //previousFrameTimeCapture = frame.ColorFrameReference.RelativeTime;
 
-                        var img = this.pictureBoxCameraColor.Image;
-
-                        if (img != null)
-                        {
+                        //будем расчитывать на max - 30 fps.
 
 
-                            var frameID = this.probabilityFrameCounter++;
+                        //    var frameID = this.probabilityFrameCounter++;
+                        //    Stopwatch watch = Stopwatch.StartNew();
 
-                            TFGraph g = new TFGraph();
-                            var model = File.ReadAllBytes(this.GraphPath);
-                            g.Import(model, "");
-                            var labels = File.ReadAllLines(this.LabelsPath);
-                            var session = new TFSession(g);
-                            var g_input = g["Mul"][0];
-                            var g_output = g["final_result"][0];
-                            var runner = session.GetRunner();
+                            // dont use tensorflowahrp gpu or cpu, instead we gonna use emgu.tf cpu with ~500 ms per frame
 
 
-                            var tensor = ImageUtil.CreateTensorFromImageFile(img);
 
-                            runner.AddInput(g_input, tensor).Fetch(g_output);
-                            var output = runner.Run();
+                            //using (var g = new TFGraph())
+                            //{
+                            //    g.Import(new TFBuffer(this.modelFile));
 
-                            var bestIdx = 0;
-                            float best = 0;
-                            var result = output[0];
-                            var rshape = result.Shape;
-                            var probabilities = ((float[][])result.GetValue(jagged: true))[0];
-                            for (int r = 0; r < probabilities.Length; r++)
-                            {
-                                if (probabilities[r] > best)
-                                {
-                                    bestIdx = r;
-                                    best = probabilities[r];
-                                }
-                            }
+                            //    using (var session = new TFSession(g))
+                            //    {
+                            //        var g_input = g["input"][0];
+                            //        var g_output = g["final_result"][0];
+                            //        var runner = session.GetRunner();
 
-                            Debug.WriteLine("Tensorflow thinks this is: " + labels[bestIdx] + " Prob : " + best * 100);
+                            //        //var bitmap = ImageUtil.ResizeImage(img, 224, 224);
+                            //        //
+                            //        var bitmap = new Bitmap(@"C:\Users\inter\OneDrive\Documents\Visual Studio 2015\Projects\SignLanguageTranslater\SignLanguageTrainer\bin\Debug\TrainImages\a\2018-05-06_04-48-09-3319.jpg");
+                            //        var tensor = ImageUtil.CreateTensorFromImageFile(bitmap);
+
+                            //        runner.AddInput(g_input, tensor).Fetch(g_output);
+                            //        var output = runner.Run();
+
+                            //        var bestIdx = 0;
+                            //        float best = 0;
+                            //        var result = output[0];
+                            //        var rshape = result.Shape;
+                            //        var probabilities = ((float[][])result.GetValue(jagged: true))[0];
+                            //        watch.Stop();
+                            //        Console.WriteLine($"time took = {watch.Elapsed.Milliseconds}");
+
+                            //        for (int r = 0; r < probabilities.Length; r++)
+                            //        {
+                            //            if (probabilities[r] > best)
+                            //            {
+                            //                bestIdx = r;
+                            //                best = probabilities[r];
+                            //            }
+                            //        }
+
+                            //        foreach (var t in output)
+                            //        {
+                            //            t.Dispose();
+                            //        }
+
+                            //        tensor.Dispose();
+
+                            //        bitmap.Dispose();
+                                 
+
+                            //        Debug.WriteLine("Tensorflow thinks this is: " + this.labelsFile[bestIdx] + " Prob : " + best * 100);
+                            //    }
+                            //}
                         }
 
                         //if (frameID % 150 == 0)
@@ -255,10 +312,11 @@ namespace SignLanguageTranslater
                           //  StartRecognitionThread(img, frameID,
                             //    new Action<Dictionary<string, float>>(CollectImageRecognizes));
                         //}
-                    }
+                    //}
                     catch (Exception ex)
                     {
                         var s = ex;
+                        
                         // Nothing...
                     }
                 }
@@ -312,10 +370,6 @@ namespace SignLanguageTranslater
         //    }
         //}
 
-        void CollectImageRecognizes(Dictionary<string, float> probabilities)
-        {
-
-        }
 
         /// <summary>
         /// Метод отрисовки обычной камеры из цветного фрейма
@@ -356,12 +410,48 @@ namespace SignLanguageTranslater
 
                 // Наконец создаем картинку из буфера. 
                 outputImage.UnlockBits(imageData);
-                this.pictureBoxCameraColor.Image = drawGestureStaticRectabgle(outputImage);
+
+                var img = drawGestureStaticRectabgle(outputImage);
+
+                this.pictureBoxCameraColor.Image = img;
+
+                this.sharedImage = img.Clone() as Image;
             }
             else
             {
                 // Nothing...
             }
+        }
+
+        private bool SaveSharedImage()
+        {
+            bool flag = false;
+            this.Invoke(new Action(() => {
+                if (this.sharedImage != null)
+                {
+                    Image img = this.sharedImage;
+                    Rectangle rec = new Rectangle(img.Width / 2 + img.Width / 8 + 2, img.Height / 2 - img.Height / 4 + 2, img.Width / 8 + img.Width / 8 / 8 - 4, img.Height / 4 - 4);
+                    Bitmap target = new Bitmap(rec.Width, rec.Height);
+
+                    using (Graphics g = Graphics.FromImage(target))
+                    {
+                        g.DrawImage(img, new Rectangle(0, 0, target.Width, target.Height),
+                                         rec,
+                                         GraphicsUnit.Pixel);
+                    }
+
+ 
+
+                    ImageUtil.ResizeImage(target, 224, 224).Save(this.tmpImageFileName, ImageFormat.Jpeg);
+                    flag = true;
+                }
+                else
+                {
+                    flag = false;
+                }
+            }));
+
+            return flag;
         }
 
         private Image drawGestureStaticRectabgle(Image img)
@@ -370,6 +460,40 @@ namespace SignLanguageTranslater
             {
                 gr.DrawRectangle(new Pen(Color.Red, 2), new Rectangle(img.Width / 2 + img.Width / 8, img.Height / 2 - img.Height / 4, img.Width / 8 + img.Width / 8 / 8, img.Height / 4));
             }
+
+            return img;
+        }
+
+        private Image DrawText(String text, Font font, Color textColor, Color backColor)
+        {
+            //first, create a dummy bitmap just to get a graphics object
+            Image img = new Bitmap(1, 1);
+            Graphics drawing = Graphics.FromImage(img);
+
+            //measure the string to see how big the image needs to be
+            SizeF textSize = drawing.MeasureString(text, font);
+
+            //free up the dummy image and old graphics object
+            img.Dispose();
+            drawing.Dispose();
+
+            //create a new image of the right size
+            img = new Bitmap((int)textSize.Width, (int)textSize.Height);
+
+            drawing = Graphics.FromImage(img);
+
+            //paint the background
+            drawing.Clear(backColor);
+
+            //create a brush for the text
+            Brush textBrush = new SolidBrush(textColor);
+
+            drawing.DrawString(text, font, textBrush, 0, 0);
+
+            drawing.Save();
+
+            textBrush.Dispose();
+            drawing.Dispose();
 
             return img;
         }
