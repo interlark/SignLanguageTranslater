@@ -8,7 +8,6 @@
 - Первый - **Тренировочный модуль**, тут использованы технологии **Tensorflow** для тренировки жестов сделанных особым образом снятые через **Kinect v2**.
 Необходимо до использования установить **Python >= 3.6** и установить пакет **tensorflow-1.4.0** или  **tensorflow-1.4.0-gpu** для уменьшения времени работы скрипта обучения модели. (Только для владельцев Geforce NVIDIA).
 ![Gesture Manager](https://github.com/interlark/SignLanguageTranslater/raw/master/screenshots/gesture_manager.jpg)
-![Capturing Gesture](https://github.com/interlark/SignLanguageTranslater/raw/master/screenshots/capturing_gesture.jpg)
 
 ![Model Training](https://github.com/interlark/SignLanguageTranslater/raw/master/screenshots/python_training.jpg)
 - Второй - непосредственно **Модуль перевода**.
@@ -16,11 +15,6 @@
 
 ![Gesture Recognition Main](https://github.com/interlark/SignLanguageTranslater/raw/master/screenshots/gesture_recognition_main.jpg)
 
-
-![Gesture Recognition Н](https://github.com/interlark/SignLanguageTranslater/raw/master/screenshots/gesture_recognition_n.jpg)
-![Gesture Recognition У](https://github.com/interlark/SignLanguageTranslater/raw/master/screenshots/gesture_recognition_u.jpg)
-
-![Gesture Recognition У](https://github.com/interlark/SignLanguageTranslater/raw/master/screenshots/gesture_recognition_comma.jpg)
 
 > Для контрибуторов:
 Узел входа модели при использовании архитектуры **mobilenet** - ***input***, у **inception v3** - ***Mul***. Выхода - ***final_result***. Информация по пакетам работающим с моделями: **EmguTF** - наблюдаются проблемы с памятью при загрузке изображения и преобразования его в тензор. **TensorflowSharp** имеет по стандарту библиотеку ***libtensorflow***, работает с CPU при работе с моделью, компилировал с gpu поддержкой - наблюдаются лютые утечки памяти в циклах.
